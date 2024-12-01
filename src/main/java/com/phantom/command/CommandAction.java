@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum CommandAction {
-    MASTER("master");
+    MASTER("master"),
+    CONNECT("connect");
 
     private final String name;
 }

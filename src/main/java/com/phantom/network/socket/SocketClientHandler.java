@@ -62,7 +62,7 @@ public class SocketClientHandler extends Thread {
         return parser.parseFromBytes(rawBytes);
     }
 
-    private boolean containsEndOfHeaders(byte[] data) {
+    private boolean containsEndOfHeaders(byte[] data) { // Optimize further
         for (int i = 0; i < data.length - 3; i++) {
             if (data[i] == '\r' && data[i + 1] == '\n' && data[i + 2] == '\r' && data[i + 3] == '\n') {
                 return true;

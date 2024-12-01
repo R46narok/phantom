@@ -1,5 +1,6 @@
 package com.phantom.proxy;
 
+import com.phantom.model.Channel;
 import com.phantom.network.http.HttpRequest;
 import com.phantom.network.socket.SocketConnectionPool;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class ProxyOrchestrator {
     private final Map<Long, Queue<HttpRequest>> blockedRequests = new HashMap<>();
 
     @Getter
-    private final List<Long> providers = new ArrayList<>();
+    private final List<Channel> channels = new ArrayList<>();
 
     public synchronized void run(int port) {
         log.info("Starting proxy on port {}", port);
@@ -26,15 +27,19 @@ public class ProxyOrchestrator {
         pool.listen();
     }
 
+    public HttpRequest getNextRequest(Long threadId) {
+        return blockedRequests.get(threadId).peek();
+    }
+
     public void addBlockedRequest(HttpRequest request) {
         Long threadId = Thread.currentThread().getId();
+        String threadName = Thread.currentThread().getName();
         if (!blockedRequests.containsKey(threadId)) {
             blockedRequests.put(threadId, new LinkedList<>());
-            providers.add(threadId);
+            channels.add(new Channel(threadId, threadName));
         }
 
         blockedRequests.get(threadId).add(request);
     }
-
 
 }
